@@ -1,50 +1,111 @@
 <div align="center">
-  <img src="public/images/logo/light_logo.png" width="120" height="120" alt="Property Hub Logo" onerror="this.src='public/manifest/icon-192x192.png'; this.onerror=null;">
-  <h1>Property Hub</h1>
-  <p><b>Premium Property Management, Tenant Verification & Lease Agreement System</b></p>
+  <img src="public/images/logo/light_logo.png" width="120" height="120" alt="EventKey Logo" onerror="this.src='public/manifest/icon-192x192.png'; this.onerror=null;">
+  <h1>EventKey</h1>
+  <p><b>One Scan. One Entry.</b></p>
 </div>
 
-Property Hub is a premium, modern, all-in-one real estate platform designed for property owners, agents, and clients. It provides a sleek, glassmorphic interface to list properties, match client requirements, manage legal agreements, track payment ledgers, and secure client documents.
+**EventKey** is a high-performance event management and secure QR pass validation platform. Built for instant, atomic access control, EventKey ensures single-use ticket entry with zero double-scans, seamless QR code pass generation, real-time admin scanner validation, and comprehensive check-in analytics.
 
 ![Next.js](https://img.shields.io/badge/Next.js-000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 ![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Prisma](https://img.shields.io/badge/Prisma-39827E?style=for-the-badge&logo=Prisma&logoColor=white)
 ![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Better Auth](https://img.shields.io/badge/Better_Auth-FF4154?style=for-the-badge&logo=auth0&logoColor=white)
-![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=progressive-web-apps&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+
+---
+
+## 🏗️ System Architecture
+
+```text
+                    ┌───────────────┐
+                    │     Admin     │
+                    └───────┬───────┘
+                            │
+                       Create Event
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │ Event + Pass  │
+                    │ PostgreSQL    │
+                    └───────┬───────┘
+                            │
+                       Random Token
+                            │
+                            ▼
+                       QR Generator
+                            │
+                            ▼
+                         User QR
+                            │
+                            │
+                     User arrives
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │ Admin Scanner │
+                    └───────┬───────┘
+                            │
+                       Scan Token
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │ Next.js API   │
+                    │ Server        │
+                    └───────┬───────┘
+                            │
+                     Atomic validation
+                            │
+                 ┌──────────┴──────────┐
+                 │                     │
+             APPROVED                DENIED
+                 │                     │
+                 ▼                     ▼
+          ACTIVE → USED          Log rejection
+                 │
+                 ▼
+            CheckIn record
+```
+
+---
+
+## 🌐 Application URL Structure
+
+Assuming base domain `eventkey.com`:
+
+| URL | Description |
+| :--- | :--- |
+| `eventkey.com` | Public Landing & Main Portal |
+| `eventkey.com/admin` | Admin Dashboard |
+| `eventkey.com/admin/events` | Events Management Overview |
+| `eventkey.com/admin/events/[eventId]` | Event Details & Summary |
+| `eventkey.com/admin/events/[eventId]/passes` | Pass & Ticket Generator / Manager |
+| `eventkey.com/admin/events/[eventId]/scanner` | Gate / Admin QR Code Scanner |
+| `eventkey.com/admin/events/[eventId]/check-ins` | Live Check-In Log & Analytics |
+| `eventkey.com/p/[token]` | Public User Pass View & QR Code |
 
 ---
 
 ## 🌟 Key Features
 
-### 🏢 Comprehensive Property Registry
-- **Property Types**: Support for Agricultural, Non-Agricultural, Hotels, Tenaments, Flats, and Plots.
-- **Custom Measurements**: Automatic translation between diverse measurement units (Square Feet, Acres, Bigha, Guntha).
-- **Flexible Listing States**: Manage property listings as Rent, Rented, Sell, Sold Out, Buy, Hold, or Draft.
+### 🎟️ Event & Pass Management
+- **Event Creation**: Admins create and configure events with capacity, dates, and venue settings.
+- **Secure Token Pass Generation**: Generates cryptographically secure, random tokens for every attendee pass.
+- **Dynamic QR Generator**: Visual QR code rendering accessible by users at `/p/[token]`.
 
-### 👥 Multi-Role Workspaces
-- **Admin Panel**: Approve or suspend user accounts, configure system-wide SMTP/OAuth keys, and monitor usage.
-- **Agent Dashboard**: Maintain client requirements, link properties, and coordinate deals between owners and buyers.
-- **Owner Space**: View listed assets, check lease agreements, and log transaction payouts.
-- **Client Workspace**: Access properties matching specific requirements and view signed lease documents.
+### ⚡ Atomic Gate Scanner & Validation
+- **Real-Time QR Scanner**: Built-in camera scanner for gate controllers at `/admin/events/[eventId]/scanner`.
+- **Atomic Validation Engine**: Prevents double-scans and concurrent fraud by executing atomic state transitions (`ACTIVE` → `USED`) on scan.
+- **Instant Approval / Denial**: Clear visual & auditory feedback for valid entries vs. rejected/duplicate passes.
+- **Rejection Logging**: Every denied scan (expired, invalid token, or already used) is securely audited.
 
-### 📝 Lease Agreements & Financial Ledger
-- **Agreement Lifecycle**: Manage and track active, expired, terminated, and pending rental or sale agreements.
-- **Payment Tracker**: Detailed ledger tracking payments, installment records, and outstanding dues.
-- **Calculators**: Integrated **Partnership Calculator** and **Profit Calculator** to easily project returns and divide stakes.
+### 📊 Real-Time Check-In Records
+- **Live Attendance Feed**: Track real-time arrivals and total check-in percentage.
+- **Auditable History**: Detailed log of every entry timestamp and scanner node.
 
-### 🔒 Secure Document Vault
-- **Identity Verification**: Secure uploading of core documents (Aadhar Card, PAN Card, Election Card, or custom files) for users and verification.
-- **Access Controls**: Restrict document visibility based on roles and link permissions.
-
-### 🔗 Guest Sharing & Map Overlays
-- **Expirable Shared Links**: Generate secure, trackable public links for properties with customizable expiration dates and real-time visit counters.
-- **Interactive Heatmap**: Visualize property distribution, density, and locations utilizing Google Maps integration.
-
-### ⚡ Premium UI & Security
-- **Modern UX/UI**: Styled with Tailwind CSS 4, Framer Motion transitions, and responsive glassmorphism.
-- **Advanced Auth**: Passwordless Passkey support, email/password verification, social login integrations (Google, Discord, Facebook), 2FA, and robust session management.
-- **PWA Ready**: Add-to-homescreen capabilities with offline support.
+### 🔒 Enterprise Security & Auth
+- **Better Auth Integration**: Multi-role security (Admin / User), passkey support, and session management.
+- **Role-Based Access Control (RBAC)**: Strict access guards protecting admin scanning endpoints and event management routes.
 
 ---
 
@@ -52,27 +113,25 @@ Property Hub is a premium, modern, all-in-one real estate platform designed for 
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Turbopack) & [React 19](https://react.dev/)
 - **Database & ORM**: PostgreSQL with [Prisma ORM](https://www.prisma.io/)
-- **Authentication**: [Better Auth](https://www.better-auth.com/) (Passkey, 2FA, Google, Discord, Email/Pass)
+- **Authentication**: [Better Auth](https://www.better-auth.com/)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **State Management & Fetching**: [TanStack React Query v5](https://tanstack.com/query/latest)
-- **Maps**: [@vis.gl/react-google-maps](https://visgl.github.io/react-google-maps/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Form Management**: `react-hook-form` & `zod` validation
-- **Utilities**: `date-fns`, `html-to-image`, `sonner` notifications
+- **State & Data Fetching**: [TanStack React Query v5](https://tanstack.com/query/latest)
+- **QR Code Engine**: `react-qr-code`
+- **Animations & Toast**: [Framer Motion](https://www.framer.com/) & `sonner`
 
 ---
 
 ## 🚀 Local Setup
 
 ### Prerequisites
-- **Node.js**: `v22` or later (configured in package engines)
-- **PostgreSQL**: A local instance or via Docker
+- **Node.js**: `v22` or later
+- **PostgreSQL**: Local instance or Docker container
 - **Package Manager**: `npm`
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Murlidhar08/Property-Hub.git
-cd Property-Hub
+git clone https://github.com/Murlidhar08/EventKey.git
+cd EventKey
 ```
 
 ### 2. Install dependencies
@@ -81,18 +140,17 @@ npm install
 ```
 
 ### 3. Environment Configuration
-Create a `.env` file from the provided `.env.example`:
+Create a `.env` file from `.env.example`:
 ```bash
 cp .env.example .env
 ```
-Update these crucial values:
+Configure your environment variables:
 - `DATABASE_URL`: Connection string to your PostgreSQL instance.
 - `BETTER_AUTH_SECRET`: Random key for session encryption.
-- `SMTP_*`: Credentials for verification/OTP emails.
-- `GOOGLE_CLIENT_ID` / `DISCORD_CLIENT_ID`: (Optional) Keys for social logins.
+- `BETTER_AUTH_URL`: Base application URL (e.g. `http://localhost:3000`).
 
 ### 4. Database Setup
-Run migrations and generate the Prisma client:
+Push schema and generate Prisma client:
 ```bash
 # Push schema to database
 npx prisma db push
@@ -101,7 +159,7 @@ npx prisma db push
 npm run db:generate
 ```
 
-### 5. Generate Better Auth Client
+### 5. Generate Auth Client
 ```bash
 npm run auth:generate
 ```
@@ -110,33 +168,30 @@ npm run auth:generate
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the Property Hub dashboard.
+Open [http://localhost:3000](http://localhost:3000) to view EventKey.
 
 ---
 
 ## 🐳 Docker Deployment
 
-Property Hub is fully containerized. You can launch it using either of the following setup options:
+EventKey is fully containerized. You can launch it using Docker Compose:
 
-### Option A: App + Database (Recommended for Quick Testing)
-This launches both the Property Hub application and a PostgreSQL database container.
+### Option A: App + PostgreSQL Container
 ```bash
-docker-compose --file docker-compose-with-db.yml up -d --build
+docker-compose --file docker-compose.yml up -d --build
 ```
 
-### Option B: App Only (Connecting to an External Database)
-Ensure you set your database details in `.env.production` or `.env` and run:
+### Option B: App Only (Connecting to External Database)
 ```bash
-docker-compose up -d --build
+docker-compose --file docker-compose-without-db.yml up -d --build
 ```
-The application will listen on [http://localhost:3000](http://localhost:3000).
 
 ---
 
 ## 📄 License
 
-This repository is private and intended for internal use. For queries regarding licensing or contribution, contact the Property-Hub team.
+This repository is private and intended for EventKey internal use.
 
 ---
 
-Built with ❤️ by the **Property-Hub Team**.
+Built with ❤️ by the **EventKey Team**.
