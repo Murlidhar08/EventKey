@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { BackHeader } from "@/components/back-header";
 import { getUserSession } from "@/lib/auth/auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
+import MobileNav from "@/components/tab/mobile-tab";
 
 export const dynamic = "force-dynamic";
 
@@ -30,9 +31,11 @@ export default async function EventPassesPage({ params }: PassesPageProps) {
     <>
       <BackHeader title={`Passes — ${event.title}`} />
 
-      <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 space-y-6 p-4 sm:p-6 pb-34 max-w-7xl mx-auto w-full">
         <PassManagementClient event={event} />
       </div>
+
+      <MobileNav />
     </>
   );
 }

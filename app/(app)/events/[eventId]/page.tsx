@@ -6,6 +6,8 @@ import { EventDetailHeader } from "@/components/event-detail-header";
 import { getUserSession } from "@/lib/auth/auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
 
+import MobileNav from "@/components/tab/mobile-tab";
+
 export const dynamic = "force-dynamic";
 
 interface EventPageProps {
@@ -31,7 +33,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
     <>
       <EventDetailHeader event={event} />
 
-      <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 space-y-8 p-4 sm:p-6 pb-34 max-w-7xl mx-auto w-full">
 
         {/* Header Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-card border border-border shadow-lg p-8 dark:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-900 dark:to-purple-950/40">
@@ -202,6 +204,8 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           </div>
         </div>
       </div>
+
+      <MobileNav />
     </>
   );
 }
