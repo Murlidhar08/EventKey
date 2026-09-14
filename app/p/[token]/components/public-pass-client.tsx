@@ -48,14 +48,14 @@ const STATUS_THEMES: Record<string, StatusTheme> = {
     IconComponent: CheckCircle2,
   },
   USED: {
-    badgeClass: "bg-purple-500 text-white shadow-lg shadow-purple-500/25 font-black",
-    badgeLabel: "✓ USED PASS",
-    glowClass: "bg-purple-500/20",
-    borderClass: "border-purple-500/40 shadow-purple-950/40",
-    headerGradient: "from-purple-950/80 via-purple-900/30 to-zinc-900",
-    accentText: "text-purple-400",
-    footerText: "text-purple-400",
-    IconComponent: Clock,
+    badgeClass: "bg-rose-600 text-white shadow-lg shadow-rose-600/25 font-black",
+    badgeLabel: "✕ USED PASS",
+    glowClass: "bg-rose-600/20",
+    borderClass: "border-rose-500/40 shadow-rose-950/40",
+    headerGradient: "from-rose-950/80 via-rose-900/30 to-zinc-900",
+    accentText: "text-rose-400",
+    footerText: "text-rose-400",
+    IconComponent: XCircle,
   },
   EXPIRED: {
     badgeClass: "bg-amber-500 text-black shadow-lg shadow-amber-500/25 font-black",
@@ -86,9 +86,10 @@ export function PublicPassClient({ pass, event, eventDateFormatted }: PublicPass
   const statusKey = (pass?.status || "ACTIVE").toUpperCase();
   const theme = STATUS_THEMES[statusKey] || STATUS_THEMES.ACTIVE;
   const StatusIcon = theme.IconComponent;
+  const isUsed = statusKey === "USED";
 
   const handleDownloadFullPass = async () => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || isUsed) return;
     setDownloading(true);
     try {
       // Wait a frame for any canvas render stability
@@ -129,21 +130,23 @@ export function PublicPassClient({ pass, event, eventDateFormatted }: PublicPass
             <Sparkles className="w-3.5 h-3.5 text-pink-400" /> EventKey Verification
           </div>
 
-          <button
-            onClick={handleDownloadFullPass}
-            disabled={downloading}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white shadow-lg shadow-pink-600/25 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-          >
-            {downloading ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Downloading...
-              </>
-            ) : (
-              <>
-                <Download className="w-3.5 h-3.5" /> Download Pass
-              </>
-            )}
-          </button>
+          {!isUsed && (
+            <button
+              onClick={handleDownloadFullPass}
+              disabled={downloading}
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white shadow-lg shadow-pink-600/25 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              {downloading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Downloading...
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" /> Download Pass
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Capturable Pass Card */}
