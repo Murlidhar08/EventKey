@@ -1,8 +1,10 @@
 import { getEventDetailsAction } from "@/actions/event-actions";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Calendar, Ticket, Scan, MapPin, Activity, ArrowRight } from "lucide-react";
 import { EventDetailHeader } from "@/components/event-detail-header";
+import { getUserSession } from "@/lib/auth/auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +13,11 @@ interface EventPageProps {
 }
 
 export default async function EventDetailPage({ params }: EventPageProps) {
+  const session = await getUserSession();
+  if (!session || (session.user.role !== UserRole.admin && (session.user as any).role !== "admin")) {
+    redirect("/dashboard");
+  }
+
   const { eventId } = await params;
   const res = await getEventDetailsAction(eventId);
 

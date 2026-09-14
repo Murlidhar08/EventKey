@@ -3,6 +3,13 @@
 import { prisma } from "@/lib/prisma/prisma";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
+import { getUserSession } from "@/lib/auth/auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
+
+async function isUserAdmin() {
+  const session = await getUserSession();
+  return !!session && (session.user.role === UserRole.admin || (session.user as any).role === "admin");
+}
 
 export interface CreateEventInput {
   title: string;
@@ -52,6 +59,9 @@ export interface ScanResult {
  */
 export async function createEventAction(input: CreateEventInput) {
   try {
+    if (!(await isUserAdmin())) {
+      return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
     const event = await prisma.event.create({
       data: {
         title: input.title,
@@ -76,6 +86,9 @@ export async function createEventAction(input: CreateEventInput) {
  */
 export async function updateEventAction(input: UpdateEventInput) {
   try {
+    if (!(await isUserAdmin())) {
+      return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
     const event = await prisma.event.update({
       where: { id: input.id },
       data: {
@@ -102,6 +115,9 @@ export async function updateEventAction(input: UpdateEventInput) {
  */
 export async function getEventsAction() {
   try {
+    if (!(await isUserAdmin())) {
+      return { success: false, events: [] };
+    }
     const events = await prisma.event.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -122,6 +138,9 @@ export async function getEventsAction() {
  */
 export async function getEventDetailsAction(eventId: string) {
   try {
+    if (!(await isUserAdmin())) {
+      return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
@@ -181,6 +200,9 @@ export async function getEventDetailsAction(eventId: string) {
  */
 export async function createPassAction(input: CreatePassInput) {
   try {
+    if (!(await isUserAdmin())) {
+      return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
     // Generate secure random 16-char token: ek_live_xxxxx
     const randomHex = crypto.randomBytes(12).toString("hex");
     const token = `ek_${randomHex}`;
@@ -208,6 +230,9 @@ export async function createPassAction(input: CreatePassInput) {
  */
 export async function generateBulkPassesAction(eventId: string, count: number = 5) {
   try {
+    if (!(await isUserAdmin())) {
+      return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
     const passes = [];
     for (let i = 0; i < count; i++) {
       const randomHex = crypto.randomBytes(10).toString("hex");
@@ -238,6 +263,15 @@ export async function generateBulkPassesAction(eventId: string, count: number = 
  * Evaluates token state atomically and records check-in log.
  */
 export async function validatePassTokenAction(eventId: string, token: string, scannedBy: string = "Gate Scanner"): Promise<ScanResult> {
+  if (!(await isUserAdmin())) {
+    return {
+      success: false,
+      status: "DENIED",
+      message: "Unauthorized: Admin privileges required",
+      rejectionReason: "Admin role required",
+    };
+  }
+
   const cleanToken = token.trim();
   if (!cleanToken) {
     return {

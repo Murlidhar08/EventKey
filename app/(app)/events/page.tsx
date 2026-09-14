@@ -1,14 +1,21 @@
 import { AppHeader } from "@/components/app-header";
 import { getEventsAction } from "@/actions/event-actions";
 import { CreateEventDialog } from "@/components/create-event-dialog";
-import Link from "next/link";
-import { Calendar, Ticket, Scan, MapPin, Activity } from "lucide-react";
+import { Calendar } from "lucide-react";
 import EventsCard from "./components/event-card";
 import MobileNav from "@/components/tab/mobile-tab";
+import { getUserSession } from "@/lib/auth/auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminEventsPage() {
+  const session = await getUserSession();
+  if (!session || (session.user.role !== UserRole.admin && (session.user as any).role !== "admin")) {
+    redirect("/dashboard");
+  }
+
   const { events } = await getEventsAction();
 
   return (

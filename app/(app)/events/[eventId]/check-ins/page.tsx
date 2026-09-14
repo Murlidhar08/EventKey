@@ -1,8 +1,9 @@
-import { AppHeader } from "@/components/app-header";
 import { getEventDetailsAction } from "@/actions/event-actions";
 import { CheckInsClient } from "@/components/check-ins-client";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { BackHeader } from "@/components/back-header";
+import { getUserSession } from "@/lib/auth/auth";
+import { UserRole } from "@/lib/generated/prisma/enums";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,11 @@ interface CheckInsPageProps {
 }
 
 export default async function EventCheckInsPage({ params }: CheckInsPageProps) {
+  const session = await getUserSession();
+  if (!session || (session.user.role !== UserRole.admin && (session.user as any).role !== "admin")) {
+    redirect("/dashboard");
+  }
+
   const { eventId } = await params;
   const res = await getEventDetailsAction(eventId);
 
