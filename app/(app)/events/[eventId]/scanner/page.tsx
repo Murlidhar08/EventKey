@@ -2,6 +2,7 @@ import { AppHeader } from "@/components/app-header";
 import { getEventDetailsAction } from "@/actions/event-actions";
 import { AdminScannerClient } from "@/components/admin-scanner-client";
 import { notFound } from "next/navigation";
+import { BackHeader } from "@/components/back-header";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,12 @@ export default async function GateScannerPage({ params }: ScannerPageProps) {
   }
 
   return (
-    <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
-      <AppHeader title={`Gate Scanner — ${res.event.title}`} />
-      <AdminScannerClient event={res.event} />
-    </div>
+    <>
+      <BackHeader title={`Gate Scanner — ${res.event.title}`} />
+
+      <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
+        <AdminScannerClient event={res.event} />
+      </div>
+    </>
   );
 }

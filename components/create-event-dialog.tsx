@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createEventAction } from "@/actions/event-actions";
-import { Plus, Loader2, Calendar, MapPin, AlignLeft } from "lucide-react";
+import { Plus, Loader2, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
 export function CreateEventDialog() {
@@ -61,15 +61,15 @@ export function CreateEventDialog() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-card border border-border rounded-3xl p-6 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-pink-500" /> Create Event
               </h2>
               <button
                 onClick={() => setOpen(false)}
-                className="text-zinc-400 hover:text-white text-sm font-semibold"
+                className="text-muted-foreground hover:text-foreground text-sm font-semibold cursor-pointer"
               >
                 ✕
               </button>
@@ -77,84 +77,84 @@ export function CreateEventDialog() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Event Title *</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Event Title *</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Developer Conference 2026"
-                  className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-pink-500"
+                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Location / Venue</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Location / Venue</label>
                 <input
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g. Main Auditorium & Online"
-                  className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-pink-500"
+                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">Start Date *</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1">Start Date *</label>
                   <input
                     type="datetime-local"
                     required
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-500"
+                    className="w-full px-3 py-2 bg-background border border-input rounded-xl text-xs text-foreground focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">End Date *</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1">End Date *</label>
                   <input
                     type="datetime-local"
                     required
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-pink-500"
+                    className="w-full px-3 py-2 bg-background border border-input rounded-xl text-xs text-foreground focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Max Capacity</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Max Capacity</label>
                 <input
                   type="number"
                   value={capacity}
                   onChange={(e) => setCapacity(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:outline-none focus:border-pink-500"
+                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Description</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">Description</label>
                 <textarea
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Event details..."
-                  className="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-pink-500"
+                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                 />
               </div>
 
-              <div className="pt-4 border-t border-zinc-800 flex justify-end gap-3">
+              <div className="pt-4 border-t border-border flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white"
+                  className="px-4 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2.5 bg-pink-600 hover:bg-pink-500 text-white font-semibold text-xs rounded-xl transition-all shadow-md disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-pink-600 hover:bg-pink-500 text-white font-semibold text-xs rounded-xl transition-all shadow-md disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
                 >
                   {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   Save Event

@@ -2,6 +2,7 @@ import { AppHeader } from "@/components/app-header";
 import { getEventDetailsAction } from "@/actions/event-actions";
 import { PassManagementClient } from "@/components/pass-management-client";
 import { notFound } from "next/navigation";
+import { BackHeader } from "@/components/back-header";
 
 export const dynamic = "force-dynamic";
 
@@ -20,9 +21,12 @@ export default async function EventPassesPage({ params }: PassesPageProps) {
   const { event } = res;
 
   return (
-    <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
-      <AppHeader title={`Passes — ${event.title}`} />
-      <PassManagementClient event={event} />
-    </div>
+    <>
+      <BackHeader title={`Passes — ${event.title}`} />
+
+      <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
+        <PassManagementClient event={event} />
+      </div>
+    </>
   );
 }

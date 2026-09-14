@@ -53,7 +53,7 @@ export async function createEventAction(input: CreateEventInput) {
       },
     });
 
-    revalidatePath("/admin/events");
+    revalidatePath("/events");
     return { success: true, event };
   } catch (error: any) {
     console.error("createEventAction error:", error);
@@ -159,7 +159,7 @@ export async function createPassAction(input: CreatePassInput) {
       },
     });
 
-    revalidatePath(`/admin/events/${input.eventId}/passes`);
+    revalidatePath(`/events/${input.eventId}/passes`);
     return { success: true, pass };
   } catch (error: any) {
     console.error("createPassAction error:", error);
@@ -189,7 +189,7 @@ export async function generateBulkPassesAction(eventId: string, count: number = 
       passes.push(pass);
     }
 
-    revalidatePath(`/admin/events/${eventId}/passes`);
+    revalidatePath(`/events/${eventId}/passes`);
     return { success: true, count: passes.length };
   } catch (error: any) {
     console.error("generateBulkPassesAction error:", error);
@@ -314,8 +314,8 @@ export async function validatePassTokenAction(eventId: string, token: string, sc
       }),
     ]);
 
-    revalidatePath(`/admin/events/${eventId}/scanner`);
-    revalidatePath(`/admin/events/${eventId}/check-ins`);
+    revalidatePath(`/events/${eventId}/scanner`);
+    revalidatePath(`/events/${eventId}/check-ins`);
     revalidatePath(`/p/${cleanToken}`);
 
     return {

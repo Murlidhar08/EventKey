@@ -77,11 +77,11 @@ Assuming base domain `eventkey.com`:
 | :--- | :--- |
 | `eventkey.com` | Public Landing & Main Portal |
 | `eventkey.com/admin` | Admin Dashboard |
-| `eventkey.com/admin/events` | Events Management Overview |
-| `eventkey.com/admin/events/[eventId]` | Event Details & Summary |
-| `eventkey.com/admin/events/[eventId]/passes` | Pass & Ticket Generator / Manager |
-| `eventkey.com/admin/events/[eventId]/scanner` | Gate / Admin QR Code Scanner |
-| `eventkey.com/admin/events/[eventId]/check-ins` | Live Check-In Log & Analytics |
+| `eventkey.com/events` | Events Management Overview |
+| `eventkey.com/events/[eventId]` | Event Details & Summary |
+| `eventkey.com/events/[eventId]/passes` | Pass & Ticket Generator / Manager |
+| `eventkey.com/events/[eventId]/scanner` | Gate / Admin QR Code Scanner |
+| `eventkey.com/events/[eventId]/check-ins` | Live Check-In Log & Analytics |
 | `eventkey.com/p/[token]` | Public User Pass View & QR Code |
 
 ---
@@ -94,7 +94,7 @@ Assuming base domain `eventkey.com`:
 - **Dynamic QR Generator**: Visual QR code rendering accessible by users at `/p/[token]`.
 
 ### ⚡ Atomic Gate Scanner & Validation
-- **Real-Time QR Scanner**: Built-in camera scanner for gate controllers at `/admin/events/[eventId]/scanner`.
+- **Real-Time QR Scanner**: Built-in camera scanner for gate controllers at `/events/[eventId]/scanner`.
 - **Atomic Validation Engine**: Prevents double-scans and concurrent fraud by executing atomic state transitions (`ACTIVE` → `USED`) on scan.
 - **Instant Approval / Denial**: Clear visual & auditory feedback for valid entries vs. rejected/duplicate passes.
 - **Rejection Logging**: Every denied scan (expired, invalid token, or already used) is securely audited.
