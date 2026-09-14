@@ -13,6 +13,16 @@ export interface CreateEventInput {
   capacity?: number;
 }
 
+export interface UpdateEventInput {
+  id: string;
+  title: string;
+  description?: string;
+  location?: string;
+  startDate: string;
+  endDate: string;
+  capacity?: number;
+}
+
 export interface CreatePassInput {
   eventId: string;
   holderName: string;
@@ -58,6 +68,32 @@ export async function createEventAction(input: CreateEventInput) {
   } catch (error: any) {
     console.error("createEventAction error:", error);
     return { success: false, error: error?.message || "Failed to create event" };
+  }
+}
+
+/**
+ * Updates an existing event.
+ */
+export async function updateEventAction(input: UpdateEventInput) {
+  try {
+    const event = await prisma.event.update({
+      where: { id: input.id },
+      data: {
+        title: input.title,
+        description: input.description || null,
+        location: input.location || null,
+        startDate: new Date(input.startDate),
+        endDate: new Date(input.endDate),
+        capacity: input.capacity ? Number(input.capacity) : 100,
+      },
+    });
+
+    revalidatePath("/events");
+    revalidatePath(`/events/${input.id}`);
+    return { success: true, event };
+  } catch (error: any) {
+    console.error("updateEventAction error:", error);
+    return { success: false, error: error?.message || "Failed to update event" };
   }
 }
 

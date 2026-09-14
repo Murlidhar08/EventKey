@@ -4,20 +4,25 @@ import { Calendar, Ticket, Scan, MapPin, Activity } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default function EventsCard({ evt }: { evt: any }) {
-
     const startDateFormatted = new Date(evt.startDate).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
     });
 
-
     return (
         <div
             key={evt.id}
-            className="p-6 rounded-2xl bg-card border border-border hover:border-pink-500/40 transition-all flex flex-col justify-between group shadow-sm hover:shadow-md"
+            className="relative p-6 rounded-2xl bg-card border border-border hover:border-pink-500/40 transition-all flex flex-col justify-between group shadow-sm hover:shadow-md cursor-pointer"
         >
-            <div className="space-y-3">
+            {/* Absolute overlay link to event details */}
+            <Link
+                href={`/events/${evt.id}`}
+                className="absolute inset-0 rounded-2xl z-0"
+                aria-label={`View details for ${evt.title}`}
+            />
+
+            <div className="space-y-3 relative z-10 pointer-events-none">
                 <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-600 dark:text-pink-400 text-[11px] font-semibold">
                         <Calendar className="w-3 h-3" /> {startDateFormatted}
@@ -44,8 +49,8 @@ export default function EventsCard({ evt }: { evt: any }) {
                 )}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-border space-y-3">
-                <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
+            <div className="mt-6 pt-4 border-t border-border space-y-3 relative z-20 pointer-events-auto">
+                <div className="flex items-center justify-between text-xs text-muted-foreground font-medium pointer-events-none">
                     <span className="flex items-center gap-1">
                         <Ticket className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" /> {evt._count.passes} Passes Issued
                     </span>
@@ -76,5 +81,5 @@ export default function EventsCard({ evt }: { evt: any }) {
                 </div>
             </div>
         </div>
-    )
+    );
 }

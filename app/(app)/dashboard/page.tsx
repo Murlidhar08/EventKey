@@ -3,6 +3,7 @@ import { getUserSession } from "@/lib/auth/auth";
 
 import { DashboardClient } from "./components/dashboard-client";
 import { DashboardInteractions } from "./components/dashboard-interactions";
+import MobileNav from "@/components/tab/mobile-tab";
 
 // Components
 export default async function Page() {
@@ -18,6 +19,8 @@ export default async function Page() {
 
         <DashboardInteractions />
       </div>
+
+      <MobileNav />
     </>
   );
 }

@@ -4,6 +4,7 @@ import { CreateEventDialog } from "@/components/create-event-dialog";
 import Link from "next/link";
 import { Calendar, Ticket, Scan, MapPin, Activity } from "lucide-react";
 import EventsCard from "./components/event-card";
+import MobileNav from "@/components/tab/mobile-tab";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,8 @@ export default async function AdminEventsPage() {
           </div>
         )}
       </div>
+
+      <MobileNav />
     </>
   );
 }

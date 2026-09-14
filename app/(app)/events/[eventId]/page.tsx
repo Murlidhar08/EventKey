@@ -2,7 +2,7 @@ import { getEventDetailsAction } from "@/actions/event-actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, Ticket, Scan, MapPin, Activity, ArrowRight } from "lucide-react";
-import { BackHeader } from "@/components/back-header";
+import { EventDetailHeader } from "@/components/event-detail-header";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
 
   return (
     <>
-      <BackHeader title={`Event: ${event.title}`} />
+      <EventDetailHeader event={event} />
 
       <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
 

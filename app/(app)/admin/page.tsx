@@ -11,6 +11,7 @@ import { AppHeader } from "@/components/app-header";
 import { getUserSession } from "@/lib/auth/auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
 import { tran } from "@/lib/languages/i18n";
+import { BackHeader } from "@/components/back-header";
 
 export default async function AdminPage() {
   const session = await getUserSession();
@@ -22,7 +23,7 @@ export default async function AdminPage() {
 
   return (
     <>
-      <AppHeader title={tran("admin.title")} />
+      <BackHeader title={tran("admin.title")} />
       <Suspense fallback={<AdminSkeleton />}>
         <AdminContent />
       </Suspense>
