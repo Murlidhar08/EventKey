@@ -18,6 +18,7 @@ export async function getDashboardMetricsAction() {
     const [
       totalEvents,
       totalPasses,
+      totalTokensGenerated,
       activePassesCount,
       usedPassesCount,
       totalCheckIns,
@@ -28,6 +29,7 @@ export async function getDashboardMetricsAction() {
     ] = await Promise.all([
       prisma.event.count(),
       prisma.pass.count(),
+      prisma.pass.count({ where: { createdBy: session?.user?.id } }),
       prisma.pass.count({ where: { status: "ACTIVE" } }),
       prisma.pass.count({ where: { status: "USED" } }),
       prisma.checkIn.count(),
@@ -107,6 +109,7 @@ export async function getDashboardMetricsAction() {
       data: {
         totalEvents,
         totalPasses,
+        totalTokensGenerated,
         activePassesCount,
         usedPassesCount,
         totalCheckIns,

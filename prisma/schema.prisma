@@ -67,6 +67,7 @@ model User {
   passkeys      Passkey[]
   userSettings  UserSettings?
   userDocuments UserDocument[]
+  createdPasses Pass[]
 
   username        String?
   displayUsername String?
@@ -242,6 +243,8 @@ model Pass {
   holderName  String
   holderEmail String
   status      PassStatus @default(ACTIVE)
+  createdBy   String
+  creator     User       @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -249,6 +252,7 @@ model Pass {
 
   @@index([eventId])
   @@index([token])
+  @@index([createdBy])
   @@map("pass")
 }
 
@@ -268,4 +272,3 @@ model CheckIn {
   @@index([passId])
   @@map("checkIn")
 }
-

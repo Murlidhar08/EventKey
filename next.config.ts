@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   compress: true,
   typedRoutes: true,
-  allowedDevOrigins: ['10.220.149.242'],
+  allowedDevOrigins: ['10.220.149.242', "undeprecative-arhythmically-kerri.ngrok-free.dev"],
   experimental: {
     optimizePackageImports: [
       "lucide-react",

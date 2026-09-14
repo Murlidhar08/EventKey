@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import crypto from "crypto";
 import { getUserSession } from "@/lib/auth/auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
+import { getCurrentUser } from "./user.actions";
 
 async function isUserAdmin() {
   const session = await getUserSession();
@@ -200,7 +201,8 @@ export async function getEventDetailsAction(eventId: string) {
  */
 export async function createPassAction(input: CreatePassInput) {
   try {
-    if (!(await isUserAdmin())) {
+    const user = await getCurrentUser();
+    if (!user || user.role !== UserRole.admin) {
       return { success: false, error: "Unauthorized: Admin privileges required" };
     }
     // Generate secure random 16-char token: ek_live_xxxxx
@@ -214,6 +216,7 @@ export async function createPassAction(input: CreatePassInput) {
         holderName: input.holderName,
         holderEmail: input.holderEmail,
         status: "ACTIVE",
+        createdBy: user.id,
       },
     });
 
@@ -230,9 +233,11 @@ export async function createPassAction(input: CreatePassInput) {
  */
 export async function generateBulkPassesAction(eventId: string, count: number = 5) {
   try {
-    if (!(await isUserAdmin())) {
+    const user = await getCurrentUser();
+    if (!user || user.role !== UserRole.admin) {
       return { success: false, error: "Unauthorized: Admin privileges required" };
     }
+
     const passes = [];
     for (let i = 0; i < count; i++) {
       const randomHex = crypto.randomBytes(10).toString("hex");
@@ -245,6 +250,7 @@ export async function generateBulkPassesAction(eventId: string, count: number = 
           holderName: `Attendee #${num}`,
           holderEmail: `attendee${num}@example.com`,
           status: "ACTIVE",
+          createdBy: user.id,
         },
       });
       passes.push(pass);

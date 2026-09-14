@@ -19,8 +19,6 @@ export default async function Page() {
       <div className="flex-1 px-4 sm:px-6 space-y-6 sm:space-y-8 pb-34 max-w-7xl mx-auto w-full">
         <DashboardClient
           firstName={firstName}
-          email={session?.user?.email}
-          role={session?.user?.role}
           metrics={metrics}
         />
       </div>

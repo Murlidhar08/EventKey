@@ -10,6 +10,7 @@ import {
   Users,
   Sparkles,
   ArrowRight,
+  Key,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -27,16 +28,13 @@ import {
   Legend,
 } from "recharts";
 import Link from "next/link";
-import { formatUserDateTime } from "@/utility/date-time-fn";
 
 interface DashboardClientProps {
   firstName: string;
-  email?: string | null;
-  role?: string;
   metrics: any;
 }
 
-export function DashboardClient({ firstName, email, role, metrics }: DashboardClientProps) {
+export function DashboardClient({ firstName, metrics }: DashboardClientProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -46,6 +44,7 @@ export function DashboardClient({ firstName, email, role, metrics }: DashboardCl
   const m = metrics || {
     totalEvents: 0,
     totalPasses: 0,
+    totalTokensGenerated: 0,
     activePassesCount: 0,
     usedPassesCount: 0,
     totalCheckIns: 0,
@@ -69,18 +68,10 @@ export function DashboardClient({ firstName, email, role, metrics }: DashboardCl
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-600 dark:text-pink-400 text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5" /> Welcome Back
               </span>
-              {role && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase">
-                  {role}
-                </span>
-              )}
             </div>
             <h1 className="text-3xl font-black text-foreground tracking-tight">
               Hello, {firstName}!
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-              {email} • {formatUserDateTime(new Date())}
-            </p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -95,7 +86,7 @@ export function DashboardClient({ firstName, email, role, metrics }: DashboardCl
       </div>
 
       {/* Metric Cards Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="p-5 rounded-2xl bg-card border border-border shadow-xs hover:border-pink-500/30 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground">Total Events</span>
@@ -118,6 +109,17 @@ export function DashboardClient({ firstName, email, role, metrics }: DashboardCl
           <span className="text-[11px] text-muted-foreground font-medium">
             {m.activePassesCount} Active • {m.usedPassesCount} Used
           </span>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/30 transition-all">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground">Tokens Generated</span>
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <Key className="w-4 h-4" />
+            </div>
+          </div>
+          <p className="mt-3 text-3xl font-black text-amber-600 dark:text-amber-400">{m.totalTokensGenerated ?? m.totalPasses}</p>
+          <span className="text-[11px] text-muted-foreground font-medium">Generated EK Tokens</span>
         </div>
 
         <div className="p-5 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/30 transition-all">
@@ -307,11 +309,10 @@ export function DashboardClient({ firstName, email, role, metrics }: DashboardCl
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                            ci.status === "APPROVED"
-                              ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                              : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30"
-                          }`}
+                          className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${ci.status === "APPROVED"
+                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                            : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                            }`}
                         >
                           {ci.status}
                         </span>

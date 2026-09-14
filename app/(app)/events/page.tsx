@@ -20,7 +20,7 @@ export default async function AdminEventsPage() {
 
   return (
     <>
-      <AppHeader title="Events Management" />
+      <AppHeader title="Events" />
       <div className="flex-1 space-y-8 p-6 max-w-7xl mx-auto w-full">
 
         {/* Header */}

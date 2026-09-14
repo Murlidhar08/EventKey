@@ -247,7 +247,7 @@ export const auth = betterAuth({
             dateFormat: settings?.dateFormat ?? "dd/MM/yyyy",
             timeFormat: settings?.timeFormat ?? "hh:mm a",
             language: settings?.language ?? "en",
-            theme: settings?.theme ?? ThemeMode.AUTO,
+            theme: settings?.theme ?? ThemeMode.LIGHT,
           },
         },
 
