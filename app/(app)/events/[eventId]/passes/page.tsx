@@ -1,5 +1,5 @@
 import { getEventDetailsAction } from "@/actions/event-actions";
-import { PassManagementClient } from "@/components/pass-management-client";
+import { PassManagementClient } from "./components/pass-management-client";
 import { notFound, redirect } from "next/navigation";
 import { BackHeader } from "@/components/back-header";
 import { getUserSession } from "@/lib/auth/auth";

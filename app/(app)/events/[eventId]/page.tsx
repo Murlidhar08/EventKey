@@ -2,7 +2,7 @@ import { getEventDetailsAction } from "@/actions/event-actions";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Calendar, Ticket, Scan, MapPin, Activity, ArrowRight } from "lucide-react";
-import { EventDetailHeader } from "@/components/event-detail-header";
+import { EventDetailHeader } from "./components/event-detail-header";
 import { getUserSession } from "@/lib/auth/auth";
 import { UserRole } from "@/lib/generated/prisma/enums";
 

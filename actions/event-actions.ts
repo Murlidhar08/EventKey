@@ -438,6 +438,11 @@ export async function getPassByTokenAction(token: string) {
       where: { token },
       include: {
         event: true,
+        checkIns: {
+          where: { status: "APPROVED" },
+          orderBy: { scannedAt: "desc" },
+          take: 1,
+        },
       },
     });
 
@@ -445,7 +450,15 @@ export async function getPassByTokenAction(token: string) {
       return { success: false, error: "Pass not found" };
     }
 
-    return { success: true, pass };
+    const usedAt = pass.checkIns?.[0]?.scannedAt || (pass.status === "USED" ? pass.updatedAt : null);
+
+    return {
+      success: true,
+      pass: {
+        ...pass,
+        usedAt,
+      },
+    };
   } catch (error: any) {
     console.error("getPassByTokenAction error:", error);
     return { success: false, error: error?.message || "Failed to fetch pass" };

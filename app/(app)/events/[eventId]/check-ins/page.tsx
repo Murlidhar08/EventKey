@@ -1,5 +1,5 @@
 import { getEventDetailsAction } from "@/actions/event-actions";
-import { CheckInsClient } from "@/components/check-ins-client";
+import { CheckInsClient } from "./components/check-ins-client";
 import { notFound, redirect } from "next/navigation";
 import { BackHeader } from "@/components/back-header";
 import { getUserSession } from "@/lib/auth/auth";

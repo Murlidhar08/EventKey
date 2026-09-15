@@ -18,6 +18,7 @@ import {
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import Link from "next/link";
+import { formatDateDifferenceToNow } from "@/utility/date-time-fn";
 
 interface PublicPassClientProps {
   pass: any;
@@ -165,16 +166,26 @@ export function PublicPassClient({ pass, event, eventDateFormatted }: PublicPass
               </span>
             </div>
 
-            <div className="space-y-1 pt-1">
-              <h2 className="text-2xl font-black text-white tracking-tight leading-tight">{event?.title || "Special Event"}</h2>
-              {event?.location && (
-                <p className="text-xs text-zinc-300 flex items-center gap-1.5 font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-pink-400 shrink-0" /> {event.location}
+            <div className="flex items-start justify-between gap-3 pt-1">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-black text-white tracking-tight leading-tight">{event?.title || "Special Event"}</h2>
+                {event?.location && (
+                  <p className="text-xs text-zinc-300 flex items-center gap-1.5 font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-pink-400 shrink-0" /> {event.location}
+                  </p>
+                )}
+                <p className="text-xs text-zinc-400 flex items-center gap-1.5 font-medium">
+                  <Calendar className="w-3.5 h-3.5 text-purple-400 shrink-0" /> {eventDateFormatted}
                 </p>
+              </div>
+
+              {isUsed && (pass.usedAt || pass.updatedAt) && (
+                <div className="text-right shrink-0 bg-rose-950/80 border border-rose-500/40 px-3 py-1.5 rounded-2xl shadow-lg">
+                  <span className="text-xs font-bold text-rose-200 block">
+                    {formatDateDifferenceToNow(pass.usedAt || pass.updatedAt)}
+                  </span>
+                </div>
               )}
-              <p className="text-xs text-zinc-400 flex items-center gap-1.5 font-medium">
-                <Calendar className="w-3.5 h-3.5 text-purple-400 shrink-0" /> {eventDateFormatted}
-              </p>
             </div>
           </div>
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BackHeader } from "@/components/back-header";
-import { EditEventDialog } from "@/components/edit-event-dialog";
+import { EditEventDialog } from "./edit-event-dialog";
 import { Pencil } from "lucide-react";
 
 interface EventDetailHeaderProps {

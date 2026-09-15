@@ -1,5 +1,5 @@
 import { getEventDetailsAction } from "@/actions/event-actions";
-import { AdminScannerClient } from "@/components/admin-scanner-client";
+import { AdminScannerClient } from "./components/admin-scanner-client";
 import { notFound, redirect } from "next/navigation";
 import { BackHeader } from "@/components/back-header";
 import { getUserSession } from "@/lib/auth/auth";

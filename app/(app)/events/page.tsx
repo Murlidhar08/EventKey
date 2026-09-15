@@ -1,6 +1,6 @@
 import { AppHeader } from "@/components/app-header";
 import { getEventsAction } from "@/actions/event-actions";
-import { CreateEventDialog } from "@/components/create-event-dialog";
+import { CreateEventDialog } from "./components/create-event-dialog";
 import { Calendar } from "lucide-react";
 import EventsCard from "./components/event-card";
 import MobileNav from "@/components/tab/mobile-tab";
