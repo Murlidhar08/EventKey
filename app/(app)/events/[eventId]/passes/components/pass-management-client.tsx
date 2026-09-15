@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createPassAction, generateBulkPassesAction } from "@/actions/event-actions";
 import { QRCodeView } from "@/components/qr-code-view";
 import Link from "next/link";
 import { Ticket, Plus, Sparkles, Loader2, QrCode, ExternalLink, Search } from "lucide-react";
 import { toast } from "sonner";
+import { PassCard } from "./pass-card";
 
 interface PassManagementClientProps {
   event: any;
@@ -19,6 +20,22 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [selectedPass, setSelectedPass] = useState<any | null>(null);
   const [search, setSearch] = useState("");
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const handleSelectPass = (pass: any) => {
+    setSelectedPass(pass);
+    setTimeout(() => {
+      if (previewRef.current) {
+        previewRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 50);
+  };
+
+  useEffect(() => {
+    if (selectedPass && previewRef.current) {
+      previewRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [selectedPass]);
 
   const handleIssuePass = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +55,7 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
       if (res.success && res.pass) {
         toast.success(`Pass issued for ${res.pass.holderName}!`);
         setPasses([res.pass, ...passes]);
-        setSelectedPass(res.pass);
+        handleSelectPass(res.pass);
         setHolderName("");
         setHolderEmail("");
       } else {
@@ -99,11 +116,10 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
       </div>
 
       {event.status && event.status !== "ACTIVE" && (
-        <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-semibold ${
-          event.status === "ON_HOLD"
-            ? "bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300"
-            : "bg-purple-500/15 border-purple-500/30 text-purple-700 dark:text-purple-300"
-        }`}>
+        <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-semibold ${event.status === "ON_HOLD"
+          ? "bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300"
+          : "bg-purple-500/15 border-purple-500/30 text-purple-700 dark:text-purple-300"
+          }`}>
           <Ticket className="w-5 h-5 shrink-0" />
           <span>
             Pass generation is restricted because this event is currently <strong>{event.status.replace("_", " ")}</strong>.
@@ -159,7 +175,10 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
 
           {/* Selected Pass Preview Box */}
           {selectedPass && (
-            <div className="p-6 rounded-3xl bg-card border border-purple-500/40 space-y-4 text-center animate-in fade-in duration-300 shadow-sm">
+            <div
+              ref={previewRef}
+              className="scroll-mt-24 p-6 rounded-3xl bg-card border border-purple-500/40 space-y-4 text-center animate-in fade-in duration-300 shadow-sm"
+            >
               <span className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
                 Latest Generated Pass
               </span>
@@ -169,8 +188,7 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
               <div className="flex justify-center my-2">
                 <QRCodeView
                   data={`${typeof window !== "undefined" ? window.location.origin : ""}/p/${selectedPass.token}`}
-                  width={220}
-                  height={220}
+                  size={220}
                   fileName={`pass-${selectedPass.holderName}`}
                 />
               </div>
@@ -212,45 +230,7 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
               <p className="text-xs text-muted-foreground text-center py-10">No passes found</p>
             ) : (
               filteredPasses.map((pass) => (
-                <div
-                  key={pass.id}
-                  className="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border hover:border-border/80 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                >
-                  <div className="space-y-1 min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-foreground text-sm truncate">{pass.holderName}</span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          pass.status === "ACTIVE"
-                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                            : "bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30"
-                        }`}
-                      >
-                        {pass.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground truncate">{pass.holderEmail}</p>
-                    <p className="text-[11px] text-muted-foreground font-mono break-all">
-                      Token: <code className="text-purple-600 dark:text-purple-300 font-semibold">{pass.token}</code>
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-                    <button
-                      onClick={() => setSelectedPass(pass)}
-                      className="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground flex items-center gap-1.5 cursor-pointer border border-border"
-                    >
-                      <QrCode className="w-3.5 h-3.5 text-pink-500" /> Preview QR
-                    </button>
-                    <Link
-                      href={`/p/${pass.token}`}
-                      target="_blank"
-                      className="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 flex items-center gap-1.5"
-                    >
-                      Public Pass <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
+                <PassCard key={pass.id} pass={pass} setSelectedPass={handleSelectPass} />
               ))
             )}
           </div>

@@ -27,7 +27,7 @@ export default async function EventCheckInsPage({ params }: CheckInsPageProps) {
 
   return (
     <>
-      <BackHeader title={`Check-in Logs — ${res.event.title}`} />
+      <BackHeader title={`Logs — ${res.event.title}`} />
 
       <div className="flex-1 space-y-6 p-4 sm:p-6 pb-34 max-w-7xl mx-auto w-full">
         <CheckInsClient event={res.event} stats={res.stats} />

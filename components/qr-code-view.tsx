@@ -21,10 +21,8 @@ export interface QRCodeViewProps {
 
 export function QRCodeView({
   data,
-  width = 280,
-  height,
-  size,
-  showDownload = true,
+  size = 280,
+  showDownload = false,
   fileName = "eventkey-pass",
   className = "",
   bgColor = "#FFFFFF",
@@ -34,7 +32,7 @@ export function QRCodeView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
 
-  const qrSize = size || width || 280;
+  const qrSize = size || 280;
 
   const handleDownload = async () => {
     if (!data || !containerRef.current) return;

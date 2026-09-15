@@ -25,18 +25,6 @@ export function CheckInsClient({ event, stats }: CheckInsClientProps) {
 
   return (
     <div className="space-y-8">
-      {/* Top Banner */}
-      <div className="p-6 rounded-3xl bg-card border border-border flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
-        <div>
-          <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-            <Activity className="w-6 h-6 text-emerald-600 dark:text-emerald-400" /> Live Gate Check-In Audit Logs
-          </h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            Real-time entry verification logs and rejection audit records for <strong className="text-foreground">{event.title}</strong>.
-          </p>
-        </div>
-      </div>
-
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border shadow-xs">
@@ -67,29 +55,26 @@ export function CheckInsClient({ event, stats }: CheckInsClientProps) {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setFilter("ALL")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              filter === "ALL" ? "bg-foreground text-background font-bold" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${filter === "ALL" ? "bg-foreground text-background font-bold" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              }`}
           >
             All Logs ({checkIns.length})
           </button>
           <button
             onClick={() => setFilter("APPROVED")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              filter === "APPROVED"
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${filter === "APPROVED"
                 ? "bg-emerald-500 text-white font-bold"
                 : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+              }`}
           >
             Approved ({stats?.approvedCount || 0})
           </button>
           <button
             onClick={() => setFilter("DENIED")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              filter === "DENIED"
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${filter === "DENIED"
                 ? "bg-rose-500 text-white font-bold"
                 : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+              }`}
           >
             Denied ({stats?.deniedCount || 0})
           </button>
@@ -115,20 +100,18 @@ export function CheckInsClient({ event, stats }: CheckInsClientProps) {
           filtered.map((item) => (
             <div
               key={item.id}
-              className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 ${
-                item.status === "APPROVED"
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 ${item.status === "APPROVED"
                   ? "bg-muted/40 border-emerald-500/30 hover:border-emerald-500/50"
                   : "bg-muted/40 border-rose-500/30 hover:border-rose-500/50"
-              }`}
+                }`}
             >
               <div className="space-y-1 min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${
-                      item.status === "APPROVED"
+                    className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${item.status === "APPROVED"
                         ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
                         : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30"
-                    }`}
+                      }`}
                   >
                     {item.status}
                   </span>
