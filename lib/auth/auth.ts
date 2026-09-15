@@ -267,7 +267,7 @@ export const auth = betterAuth({
       maximumSessions: 5,
     }),
     haveIBeenPwned({
-      enabled: envServer.NODE_ENV === 'production',
+      enabled: envServer.ADVANCE_PASS_CHECK === "true",
       customPasswordCompromisedMessage: "This password has appeared in data breaches. Please choose a stronger, unique password."
     }),
     username(),
