@@ -48,6 +48,7 @@ export interface ScanResult {
     holderName: string;
     holderEmail: string;
     status: string;
+    usedAt?: Date | string | null;
   };
   checkIn?: {
     id: string;
@@ -317,6 +318,13 @@ export async function validatePassTokenAction(eventId: string, token: string, sc
 
     // Case 2: Pass already USED
     if (pass.status === "USED") {
+      const previousApprovedCheckIn = await prisma.checkIn.findFirst({
+        where: { passId: pass.id, status: "APPROVED" },
+        orderBy: { scannedAt: "desc" },
+      });
+
+      const usedAtDate = previousApprovedCheckIn ? previousApprovedCheckIn.scannedAt : pass.updatedAt;
+
       const checkIn = await prisma.checkIn.create({
         data: {
           eventId,
@@ -339,6 +347,7 @@ export async function validatePassTokenAction(eventId: string, token: string, sc
           holderName: pass.holderName,
           holderEmail: pass.holderEmail,
           status: pass.status,
+          usedAt: usedAtDate,
         },
         checkIn: { id: checkIn.id, scannedAt: checkIn.scannedAt },
       };
@@ -368,6 +377,7 @@ export async function validatePassTokenAction(eventId: string, token: string, sc
           holderName: pass.holderName,
           holderEmail: pass.holderEmail,
           status: pass.status,
+          usedAt: pass.updatedAt,
         },
         checkIn: { id: checkIn.id, scannedAt: checkIn.scannedAt },
       };
@@ -404,6 +414,7 @@ export async function validatePassTokenAction(eventId: string, token: string, sc
         holderName: updatedPass.holderName,
         holderEmail: updatedPass.holderEmail,
         status: updatedPass.status,
+        usedAt: checkIn.scannedAt,
       },
       checkIn: { id: checkIn.id, scannedAt: checkIn.scannedAt },
     };

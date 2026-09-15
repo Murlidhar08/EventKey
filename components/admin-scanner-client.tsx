@@ -2,11 +2,45 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { validatePassTokenAction, type ScanResult } from "@/actions/event-actions";
-import { ShieldCheck, ShieldX, Camera, RefreshCw, AlertCircle, Loader2, Keyboard, FlipHorizontal } from "lucide-react";
+import { ShieldCheck, ShieldX, Camera, RefreshCw, AlertCircle, Loader2, Keyboard, FlipHorizontal, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { formatUserTime } from "@/utility/date-time-fn";
 
 interface AdminScannerClientProps {
   event: any;
+}
+
+function formatTimeAgo(dateInput: Date | string | number, currentTime: Date = new Date()): string {
+  if (!dateInput) return "";
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return "";
+
+  const diffInSeconds = Math.max(0, Math.floor((currentTime.getTime() - date.getTime()) / 1000));
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} second${diffInSeconds === 1 ? "" : "s"} ago`;
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    const remSec = diffInSeconds % 60;
+    if (remSec > 0) {
+      return `${diffInMinutes} min ${remSec} sec ago`;
+    }
+    return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"} ago`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    const remMin = diffInMinutes % 60;
+    if (remMin > 0) {
+      return `${diffInHours} hr ${remMin} min ago`;
+    }
+    return `${diffInHours} hour${diffInHours === 1 ? "" : "s"} ago`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
 }
 
 export function AdminScannerClient({ event }: AdminScannerClientProps) {
@@ -18,6 +52,16 @@ export function AdminScannerClient({ event }: AdminScannerClientProps) {
   const [manualInput, setManualInput] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
   const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
+  const [now, setNow] = useState<Date>(new Date());
+
+  useEffect(() => {
+    if (!lastResult?.pass?.usedAt) return;
+    setNow(new Date());
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [lastResult?.pass?.usedAt]);
 
   const html5QrcodeRef = useRef<any>(null);
   const processingRef = useRef(false);
@@ -30,7 +74,7 @@ export function AdminScannerClient({ event }: AdminScannerClientProps) {
         if (html5QrcodeRef.current.isScanning) {
           html5QrcodeRef.current
             .stop()
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => {
               try {
                 html5QrcodeRef.current.clear();
@@ -340,20 +384,18 @@ export function AdminScannerClient({ event }: AdminScannerClientProps) {
       {/* Validation Result Display Card */}
       {lastResult && (
         <div
-          className={`p-5 sm:p-6 rounded-3xl border shadow-2xl transition-all duration-300 animate-in fade-in zoom-in max-w-md mx-auto ${
-            lastResult.status === "APPROVED"
-              ? "bg-emerald-500/10 dark:bg-emerald-950/50 border-emerald-500/60 shadow-emerald-500/20"
-              : "bg-rose-500/10 dark:bg-rose-950/50 border-rose-500/60 shadow-rose-500/20"
-          }`}
+          className={`p-5 sm:p-6 rounded-3xl border shadow-2xl transition-all duration-300 animate-in fade-in zoom-in max-w-md mx-auto ${lastResult.status === "APPROVED"
+            ? "bg-emerald-500/10 dark:bg-emerald-950/50 border-emerald-500/60 shadow-emerald-500/20"
+            : "bg-rose-500/10 dark:bg-rose-950/50 border-rose-500/60 shadow-rose-500/20"
+            }`}
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div
-                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-                  lastResult.status === "APPROVED"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-rose-500 text-white"
-                }`}
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 ${lastResult.status === "APPROVED"
+                  ? "bg-emerald-500 text-white"
+                  : "bg-rose-500 text-white"
+                  }`}
               >
                 {lastResult.status === "APPROVED" ? (
                   <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -364,11 +406,10 @@ export function AdminScannerClient({ event }: AdminScannerClientProps) {
 
               <div>
                 <span
-                  className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
-                    lastResult.status === "APPROVED"
-                      ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                      : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30"
-                  }`}
+                  className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${lastResult.status === "APPROVED"
+                    ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                    : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                    }`}
                 >
                   {lastResult.status}
                 </span>
@@ -383,6 +424,26 @@ export function AdminScannerClient({ event }: AdminScannerClientProps) {
               <RefreshCw className="w-3.5 h-3.5" /> Next Scan
             </button>
           </div>
+
+          {/* If pass was ALREADY USED, show how many seconds/minutes ago */}
+          {lastResult.status === "DENIED" && lastResult.pass?.usedAt && (
+            <div className="mb-4 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-between gap-3 text-rose-700 dark:text-rose-300">
+              <div className="flex items-center gap-2.5">
+                <Clock className="w-5 h-5 text-rose-500 shrink-0 animate-pulse" />
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider block text-rose-600 dark:text-rose-400">
+                    Used
+                  </span>
+                  <span className="text-xs sm:text-sm font-black text-rose-600 dark:text-rose-300">
+                    {formatTimeAgo(lastResult.pass.usedAt, now)}
+                  </span>
+                </div>
+              </div>
+              <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-300">
+                {formatUserTime(lastResult.pass.usedAt)}
+              </span>
+            </div>
+          )}
 
           {lastResult.pass && (
             <div className="pt-4 border-t border-border/50 grid grid-cols-2 gap-3 text-xs">
