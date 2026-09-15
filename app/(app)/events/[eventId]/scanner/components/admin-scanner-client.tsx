@@ -273,6 +273,19 @@ export function AdminScannerClient({ event }: AdminScannerClientProps) {
 
   return (
     <div className="max-w-xl mx-auto space-y-4 px-2 sm:px-0">
+      {event.status && event.status !== "ACTIVE" && (
+        <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-semibold ${
+          event.status === "ON_HOLD"
+            ? "bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300"
+            : "bg-purple-500/15 border-purple-500/30 text-purple-700 dark:text-purple-300"
+        }`}>
+          <AlertCircle className="w-5 h-5 shrink-0" />
+          <span>
+            <strong>Gate Alert:</strong> Event is currently <strong>{event.status.replace("_", " ")}</strong>. All pass entry scans will be denied.
+          </span>
+        </div>
+      )}
+
       {/* Top Controls Bar */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">

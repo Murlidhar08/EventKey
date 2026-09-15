@@ -113,6 +113,33 @@ export async function updateEventAction(input: UpdateEventInput) {
 }
 
 /**
+ * Updates an event status (ACTIVE, ON_HOLD, COMPLETED).
+ */
+export async function updateEventStatusAction(eventId: string, status: "ACTIVE" | "ON_HOLD" | "COMPLETED") {
+  try {
+    if (!(await isUserAdmin())) {
+      return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
+    const event = await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        status: status as any,
+      },
+    });
+
+    revalidatePath("/events");
+    revalidatePath(`/events/${eventId}`);
+    revalidatePath(`/events/${eventId}/passes`);
+    revalidatePath(`/events/${eventId}/scanner`);
+    revalidatePath(`/events/${eventId}/check-ins`);
+    return { success: true, event };
+  } catch (error: any) {
+    console.error("updateEventStatusAction error:", error);
+    return { success: false, error: error?.message || "Failed to update event status" };
+  }
+}
+
+/**
  * Gets all events with summary counters.
  */
 export async function getEventsAction() {
@@ -206,6 +233,16 @@ export async function createPassAction(input: CreatePassInput) {
     if (!user || user.role !== UserRole.admin) {
       return { success: false, error: "Unauthorized: Admin privileges required" };
     }
+
+    const event = await prisma.event.findUnique({ where: { id: input.eventId } });
+    if (!event) return { success: false, error: "Event not found" };
+    if (event.status === "ON_HOLD") {
+      return { success: false, error: "Pass creation blocked: Event is ON HOLD" };
+    }
+    if (event.status === "COMPLETED") {
+      return { success: false, error: "Pass creation blocked: Event is COMPLETED" };
+    }
+
     // Generate secure random 16-char token: ek_live_xxxxx
     const randomHex = crypto.randomBytes(12).toString("hex");
     const token = `ek_${randomHex}`;
@@ -237,6 +274,15 @@ export async function generateBulkPassesAction(eventId: string, count: number = 
     const user = await getCurrentUser();
     if (!user || user.role !== UserRole.admin) {
       return { success: false, error: "Unauthorized: Admin privileges required" };
+    }
+
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) return { success: false, error: "Event not found" };
+    if (event.status === "ON_HOLD") {
+      return { success: false, error: "Bulk pass creation blocked: Event is ON HOLD" };
+    }
+    if (event.status === "COMPLETED") {
+      return { success: false, error: "Bulk pass creation blocked: Event is COMPLETED" };
     }
 
     const passes = [];
@@ -290,6 +336,45 @@ export async function validatePassTokenAction(eventId: string, token: string, sc
   }
 
   try {
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (event?.status === "ON_HOLD") {
+      const checkIn = await prisma.checkIn.create({
+        data: {
+          eventId,
+          scannedToken: cleanToken,
+          status: "DENIED",
+          rejectionReason: "Event is currently ON HOLD",
+          scannedBy,
+        },
+      });
+      return {
+        success: false,
+        status: "DENIED",
+        message: "Entry Denied: Event is ON HOLD",
+        rejectionReason: "Event Status: ON HOLD",
+        checkIn: { id: checkIn.id, scannedAt: checkIn.scannedAt },
+      };
+    }
+
+    if (event?.status === "COMPLETED") {
+      const checkIn = await prisma.checkIn.create({
+        data: {
+          eventId,
+          scannedToken: cleanToken,
+          status: "DENIED",
+          rejectionReason: "Event is COMPLETED",
+          scannedBy,
+        },
+      });
+      return {
+        success: false,
+        status: "DENIED",
+        message: "Entry Denied: Event HAS COMPLETED",
+        rejectionReason: "Event Status: COMPLETED",
+        checkIn: { id: checkIn.id, scannedAt: checkIn.scannedAt },
+      };
+    }
+
     // Find pass
     const pass = await prisma.pass.findUnique({
       where: { token: cleanToken },

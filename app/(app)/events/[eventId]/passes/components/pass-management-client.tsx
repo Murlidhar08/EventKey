@@ -90,13 +90,26 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
 
         <button
           onClick={handleBulkGenerate}
-          disabled={bulkLoading}
-          className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 flex items-center gap-2 transition-all cursor-pointer"
+          disabled={bulkLoading || event.status === "ON_HOLD" || event.status === "COMPLETED"}
+          className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-purple-500" />}
           Generate 5 Test Passes
         </button>
       </div>
+
+      {event.status && event.status !== "ACTIVE" && (
+        <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-semibold ${
+          event.status === "ON_HOLD"
+            ? "bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300"
+            : "bg-purple-500/15 border-purple-500/30 text-purple-700 dark:text-purple-300"
+        }`}>
+          <Ticket className="w-5 h-5 shrink-0" />
+          <span>
+            Pass generation is restricted because this event is currently <strong>{event.status.replace("_", " ")}</strong>.
+          </span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Pass Creation Form Column */}
@@ -112,10 +125,11 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
                 <input
                   type="text"
                   required
+                  disabled={event.status === "ON_HOLD" || event.status === "COMPLETED"}
                   value={holderName}
                   onChange={(e) => setHolderName(e.target.value)}
                   placeholder="e.g. Alex Johnson"
-                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 disabled:opacity-50"
                 />
               </div>
 
@@ -124,17 +138,18 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
                 <input
                   type="email"
                   required
+                  disabled={event.status === "ON_HOLD" || event.status === "COMPLETED"}
                   value={holderEmail}
                   onChange={(e) => setHolderEmail(e.target.value)}
                   placeholder="alex@example.com"
-                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  className="w-full px-4 py-2.5 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 disabled:opacity-50"
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-pink-600/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                disabled={loading || event.status === "ON_HOLD" || event.status === "COMPLETED"}
+                className="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-pink-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
                 Generate QR Pass

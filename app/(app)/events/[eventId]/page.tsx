@@ -39,9 +39,24 @@ export default async function EventDetailPage({ params }: EventPageProps) {
         <div className="relative overflow-hidden rounded-3xl bg-card border border-border shadow-lg p-5 sm:p-8 dark:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-900 dark:to-purple-950/40">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-600 dark:text-pink-400 text-xs font-semibold">
-                <Calendar className="w-3.5 h-3.5" /> ID: {event.id}
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-600 dark:text-pink-400 text-xs font-semibold">
+                  <Calendar className="w-3.5 h-3.5" /> ID: {event.id}
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${
+                    event.status === "ON_HOLD"
+                      ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
+                      : event.status === "COMPLETED"
+                      ? "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30"
+                      : "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                  }`}
+                >
+                  {event.status === "ON_HOLD" && "⏸ ON HOLD"}
+                  {event.status === "COMPLETED" && "✓ COMPLETED"}
+                  {(!event.status || event.status === "ACTIVE") && "✓ ACTIVE"}
+                </span>
+              </div>
               <h1 className="text-2xl sm:text-3xl font-black text-foreground break-words">{event.title}</h1>
               {event.location && (
                 <p className="text-sm text-muted-foreground flex items-center gap-1.5">
