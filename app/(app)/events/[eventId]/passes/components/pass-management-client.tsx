@@ -180,30 +180,30 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
               Issued Passes ({passes.length})
             </h2>
 
-            <div className="relative">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search attendee or token..."
-                className="pl-9 pr-4 py-1.5 bg-background border border-input rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500"
+                className="w-full pl-9 pr-4 py-2 sm:py-1.5 bg-background border border-input rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500"
               />
             </div>
           </div>
 
-          <div className="p-4 rounded-3xl bg-card border border-border space-y-3 shadow-xs">
+          <div className="p-3 sm:p-4 rounded-3xl bg-card border border-border space-y-3 shadow-xs">
             {filteredPasses.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-10">No passes found</p>
             ) : (
               filteredPasses.map((pass) => (
                 <div
                   key={pass.id}
-                  className="p-4 rounded-2xl bg-muted/40 border border-border hover:border-border/80 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  className="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border hover:border-border/80 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-foreground text-sm">{pass.holderName}</span>
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold text-foreground text-sm truncate">{pass.holderName}</span>
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           pass.status === "ACTIVE"
@@ -214,23 +214,23 @@ export function PassManagementClient({ event }: PassManagementClientProps) {
                         {pass.status}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground">{pass.holderEmail}</p>
-                    <p className="text-[11px] text-muted-foreground font-mono">
+                    <p className="text-xs text-muted-foreground truncate">{pass.holderEmail}</p>
+                    <p className="text-[11px] text-muted-foreground font-mono break-all">
                       Token: <code className="text-purple-600 dark:text-purple-300 font-semibold">{pass.token}</code>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
                     <button
                       onClick={() => setSelectedPass(pass)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground flex items-center gap-1.5 cursor-pointer border border-border"
+                      className="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-secondary hover:bg-secondary/80 text-secondary-foreground flex items-center gap-1.5 cursor-pointer border border-border"
                     >
                       <QrCode className="w-3.5 h-3.5 text-pink-500" /> Preview QR
                     </button>
                     <Link
                       href={`/p/${pass.token}`}
                       target="_blank"
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 flex items-center gap-1.5"
+                      className="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 flex items-center gap-1.5"
                     >
                       Public Pass <ExternalLink className="w-3.5 h-3.5" />
                     </Link>

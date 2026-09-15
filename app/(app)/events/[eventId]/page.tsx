@@ -36,36 +36,36 @@ export default async function EventDetailPage({ params }: EventPageProps) {
       <div className="flex-1 space-y-8 p-4 sm:p-6 pb-34 max-w-7xl mx-auto w-full">
 
         {/* Header Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-card border border-border shadow-lg p-8 dark:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-900 dark:to-purple-950/40">
+        <div className="relative overflow-hidden rounded-3xl bg-card border border-border shadow-lg p-5 sm:p-8 dark:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-900 dark:to-purple-950/40">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-600 dark:text-pink-400 text-xs font-semibold">
                 <Calendar className="w-3.5 h-3.5" /> ID: {event.id}
               </span>
-              <h1 className="text-3xl font-black text-foreground">{event.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-foreground break-words">{event.title}</h1>
               {event.location && (
                 <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-muted-foreground" /> {event.location}
+                  <MapPin className="w-4 h-4 text-muted-foreground shrink-0" /> {event.location}
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2.5 sm:gap-3 w-full md:w-auto">
               <Link
                 href={`/events/${event.id}/passes`}
-                className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md flex items-center gap-2"
+                className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 <Ticket className="w-4 h-4" /> Manage Passes ({event._count.passes})
               </Link>
               <Link
                 href={`/events/${event.id}/scanner`}
-                className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-md flex items-center gap-2"
+                className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-pink-600 hover:bg-pink-500 text-white transition-all shadow-md flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 <Scan className="w-4 h-4" /> Open Gate Scanner
               </Link>
               <Link
                 href={`/events/${event.id}/check-ins`}
-                className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground transition-all flex items-center gap-2 border border-border"
+                className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground transition-all flex items-center justify-center gap-2 border border-border w-full sm:w-auto"
               >
                 <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Check-in Logs
               </Link>
@@ -74,26 +74,26 @@ export default async function EventDetailPage({ params }: EventPageProps) {
         </div>
 
         {/* Metrics Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border shadow-xs">
             <span className="text-xs font-semibold text-muted-foreground">Total Issued Passes</span>
             <p className="mt-2 text-2xl font-bold text-foreground">{event._count.passes}</p>
             <span className="text-[11px] text-muted-foreground font-medium">Capacity: {event.capacity}</span>
           </div>
 
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs">
+          <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border shadow-xs">
             <span className="text-xs font-semibold text-muted-foreground">Active Passes</span>
             <p className="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats?.activePassesCount || 0}</p>
             <span className="text-[11px] text-muted-foreground font-medium">Unscanned & Ready</span>
           </div>
 
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs">
+          <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border shadow-xs">
             <span className="text-xs font-semibold text-muted-foreground">Used / Checked-In</span>
             <p className="mt-2 text-2xl font-bold text-purple-600 dark:text-purple-400">{stats?.approvedCount || 0}</p>
             <span className="text-[11px] text-muted-foreground font-medium">Atomic Gate Scans</span>
           </div>
 
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs">
+          <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border shadow-xs">
             <span className="text-xs font-semibold text-muted-foreground">Scan Rejections</span>
             <p className="mt-2 text-2xl font-bold text-rose-600 dark:text-rose-400">{stats?.deniedCount || 0}</p>
             <span className="text-[11px] text-muted-foreground font-medium">Double-scans / Invalid</span>

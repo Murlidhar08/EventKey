@@ -53,10 +53,10 @@ export function QRCodeView({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center p-4 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl ${className}`}
+      className={`flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-900/80 backdrop-blur-md rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl ${className}`}
     >
       <div className="relative flex items-center justify-center">
-        <div ref={containerRef} className="rounded-xl overflow-hidden shadow-sm bg-white p-2">
+        <div ref={containerRef} className="rounded-xl overflow-hidden bg-white p-2">
           {data ? (
             <QRCode
               value={data}
