@@ -16,6 +16,6 @@ export function getDefaultConfig() {
     dateFormat: "dd/MM/yyyy",
     timeFormat: "hh:mm a",
     language: "en",
-    theme: ThemeMode.AUTO,
+    theme: ThemeMode.LIGHT,
   }
 }
