@@ -1,104 +1,60 @@
-import defaultOptionsConfig from "@/public/options.json";
-import type QRCodeStyling from "qr-code-styling";
-import type { Options } from "qr-code-styling";
-
-export type { Options };
-
-export interface QRCodeCustomConfig {
+export interface QRCodeOptions {
   data: string;
+  size?: number;
   width?: number;
   height?: number;
-  image?: string;
-  type?: "canvas" | "svg";
-  margin?: number;
-  dotsColor?: string;
-  backgroundColor?: string;
-  customOptions?: Partial<Options>;
+  bgColor?: string;
+  fgColor?: string;
+  level?: "L" | "M" | "Q" | "H";
 }
 
 /**
- * Merges the base options from public/options.json with optional user/data overrides.
+ * Utility to download an SVG QR Code element as a PNG image.
  */
-export function getQROptions(data: string, overrides: Partial<Options> = {}): Options {
-  const baseOptions: Options = {
-    width: overrides.width || defaultOptionsConfig.width || 300,
-    height: overrides.height || defaultOptionsConfig.height || 300,
-    type: overrides.type || (defaultOptionsConfig.type as any) || "canvas",
-    shape: overrides.shape || (defaultOptionsConfig.shape as any) || "square",
-    data: data,
-    margin: overrides.margin ?? defaultOptionsConfig.margin ?? 0,
-    qrOptions: {
-      typeNumber: 0,
-      mode: "Byte",
-      errorCorrectionLevel: (defaultOptionsConfig.qrOptions?.errorCorrectionLevel as any) || "Q",
-      ...overrides.qrOptions,
-    },
-    imageOptions: {
-      hideBackgroundDots: defaultOptionsConfig.imageOptions?.hideBackgroundDots ?? true,
-      imageSize: defaultOptionsConfig.imageOptions?.imageSize ?? 0.4,
-      margin: defaultOptionsConfig.imageOptions?.margin ?? 0,
-      ...overrides.imageOptions,
-    },
-    dotsOptions: {
-      type: (defaultOptionsConfig.dotsOptions?.type as any) || "square",
-      color: defaultOptionsConfig.dotsOptions?.color || "#f00094",
-      roundSize: defaultOptionsConfig.dotsOptions?.roundSize ?? true,
-      gradient: defaultOptionsConfig.dotsOptions?.gradient as any,
-      ...overrides.dotsOptions,
-    },
-    backgroundOptions: {
-      round: defaultOptionsConfig.backgroundOptions?.round ?? 0,
-      color: defaultOptionsConfig.backgroundOptions?.color || "#ffffff",
-      ...overrides.backgroundOptions,
-    },
-    cornersSquareOptions: {
-      type: (defaultOptionsConfig.cornersSquareOptions?.type as any) || undefined,
-      color: defaultOptionsConfig.cornersSquareOptions?.color || "#000000",
-      ...overrides.cornersSquareOptions,
-    },
-    cornersDotOptions: {
-      type: (defaultOptionsConfig.cornersDotOptions?.type as any) || undefined,
-      color: defaultOptionsConfig.cornersDotOptions?.color || "#000000",
-      ...overrides.cornersDotOptions,
-    },
-  };
+export async function downloadQRCodeFromSvg(
+  svgElement: SVGElement,
+  fileName: string = "eventkey-pass",
+  exportSize: number = 500
+): Promise<void> {
+  if (typeof window === "undefined" || !svgElement) return;
 
-  return {
-    ...baseOptions,
-    ...overrides,
-    data,
-  };
+  const svgData = new XMLSerializer().serializeToString(svgElement);
+  const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(svgBlob);
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = exportSize;
+        canvas.height = exportSize;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, exportSize, exportSize);
+          ctx.drawImage(img, 0, 0, exportSize, exportSize);
+          const pngUrl = canvas.toDataURL("image/png");
+          const a = document.createElement("a");
+          const name = fileName.endsWith(".png") ? fileName : `${fileName}.png`;
+          a.download = name;
+          a.href = pngUrl;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+        URL.revokeObjectURL(url);
+        resolve();
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    };
+    img.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+    img.src = url;
+  });
 }
 
-/**
- * Creates a new QRCodeStyling instance on client side.
- */
-export async function createQRCodeInstance(data: string, overrides: Partial<Options> = {}): Promise<QRCodeStyling | null> {
-  if (typeof window === "undefined") return null;
-  const QRCodeStylingLib = (await import("qr-code-styling")).default;
-  const options = getQROptions(data, overrides);
-  return new QRCodeStylingLib(options);
-}
-
-/**
- * Renders QR Code into a DOM container element.
- */
-export async function renderQRCode(container: HTMLElement, data: string, overrides: Partial<Options> = {}): Promise<QRCodeStyling | null> {
-  if (typeof window === "undefined" || !container) return null;
-  container.innerHTML = "";
-  const qrCode = await createQRCodeInstance(data, overrides);
-  if (qrCode) {
-    qrCode.append(container);
-  }
-  return qrCode;
-}
-
-/**
- * Utility to download generated QR Code.
- */
-export async function downloadQRCode(data: string, fileName: string = "eventkey-pass", extension: "png" | "svg" | "jpeg" | "webp" = "png", overrides: Partial<Options> = {}): Promise<void> {
-  const qrCode = await createQRCodeInstance(data, overrides);
-  if (qrCode) {
-    await qrCode.download({ name: fileName, extension });
-  }
-}
